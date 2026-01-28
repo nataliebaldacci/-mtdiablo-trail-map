@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>4 Days Mt Diablo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Esri Leaflet for vector tiles -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-vector@4.2.3/dist/esri-leaflet-vector.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        
+        /* Control Panel */
+        .panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 260px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            font-size: 13px;
+        }
+        .panel-header {
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #2E7D32 0%, #388E3C 100%);
+            color: white;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+        }
+        .panel-section {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .panel-section:last-child { border-bottom: none; }
+        .panel-section h4 {
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Dropzones */
+        .dropzone {
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            padding: 8px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .dropzone:hover { border-color: #888; background: #f9f9f9; }
+        .dropzone.dragover { border-color: #4CAF50; background: #E8F5E9; }
+        .dropzone.loaded { 
+            border-color: #4CAF50; 
+            background: #E8F5E9; 
+            border-style: solid;
+            color: #2E7D32;
+        }
+        
+        /* Layer toggles */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            padding: 4px 0;
+        }
+        .toggle-row input { margin-right: 8px; }
+        .toggle-row label { cursor: pointer; flex: 1; font-size: 12px; }
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            display: inline-block;
+        }
+        
+        /* Legend */
+        .legend {
+            position: absolute;
+            bottom: 25px;
+            right: 10px;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-size: 11px;
+        }
+        .legend h4 { 
+            margin-bottom: 8px; 
+            font-size: 12px;
+            color: #333;
+        }
+        .legend-item { 
+            display: flex; 
+            align-items: center; 
+            margin: 4px 0; 
+        }
+        .legend-color { 
+            width: 20px; 
+            height: 10px; 
+            margin-right: 8px; 
+            border-radius: 2px;
+        }
+        .legend-line {
+            width: 20px;
+            height: 3px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
+        /* Trail callout labels */
+        .trail-label {
+            background: rgba(255,255,255,0.92);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-style: italic;
+            color: #5D4037;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        /* POI markers */
+        .poi-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .poi-campground { background: #8BC34A; color: white; }
+        .poi-lunch { background: #FF9800; color: white; }
+        .poi-viewpoint { background: #2196F3; color: white; }
+        .poi-start { background: #4CAF50; color: white; }
+        .poi-end { background: #F44336; color: white; }
+        
+        /* Status bar */
+        #status {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255,255,255,0.95);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            z-index: 1000;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        
+        /* URL input */
+        .url-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+        .url-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            width: 100%;
+        }
+        .btn:hover { background: #388E3C; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <!-- Control Panel -->
+    <div class="panel">
+        <div class="panel-header">ðŸ”ï¸ 4 Days Mt Diablo</div>
+        
+        <div class="panel-section">
+            <h4>Load Data</h4>
+            <input type="text" class="url-input" id="service-url" 
+                   placeholder="Paste ArcGIS FeatureServer URL...">
+            <button class="btn" onclick="loadFromService()">Load from Service</button>
+            <div style="text-align:center; margin: 8px 0; color:#999; font-size:10px;">â€” or drop files â€”</div>
+            <div class="dropzone" id="drop-elevation">ðŸ“Š Elevation GeoJSON</div>
+            <div class="dropzone" id="drop-trails">ðŸ¥¾ Trails GeoJSON</div>
+            <div class="dropzone" id="drop-points">ðŸ“ Points of Interest</div>
+        </div>
+        
+        <div class="panel-section">
+            <h4>Base Layers</h4>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-hillshade" checked>
+                <label for="chk-hillshade">Hillshade</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-elevation" checked>
+                <label for="chk-elevation">Elevation Colors</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-water" checked>
+                <label for="chk-water">Water Bodies</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-streams" checked>
+                <label for="chk-streams">Streams</label>
+            </div>
+        </div>
+        
+        <div class="panel-section">
+            <h4>Trail Days</h4>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-day1" checked>
+                <span class="color-dot" style="background:#E74C3C"></span>
+                <label for="chk-day1">Day 1 (10.8 mi)</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-day2" checked>
+                <span class="color-dot" style="background:#3498DB"></span>
+                <label for="chk-day2">Day 2 (8.7 mi)</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-day3" checked>
+                <span class="color-dot" style="background:#9B59B6"></span>
+                <label for="chk-day3">Day 3 (8.9 mi)</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-day4" checked>
+                <span class="color-dot" style="background:#F39C12"></span>
+                <label for="chk-day4">Day 4 (5.7 mi)</label>
+            </div>
+        </div>
+        
+        <div class="panel-section">
+            <h4>Points of Interest</h4>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-camps" checked>
+                <label for="chk-camps">â›º Campgrounds</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-lunch" checked>
+                <label for="chk-lunch">ðŸ´ Lunch Spots</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-views" checked>
+                <label for="chk-views">ðŸ‘ï¸ Viewpoints</label>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="chk-labels" checked>
+                <label for="chk-labels">ðŸ·ï¸ Trail Labels</label>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Legend -->
+    <div class="legend">
+        <h4>Legend</h4>
+        <div class="legend-item"><div class="legend-line" style="background:#E74C3C"></div> Day 1</div>
+        <div class="legend-item"><div class="legend-line" style="background:#3498DB"></div> Day 2</div>
+        <div class="legend-item"><div class="legend-line" style="background:#9B59B6"></div> Day 3</div>
+        <div class="legend-item"><div class="legend-line" style="background:#F39C12"></div> Day 4</div>
+        <div style="border-top:1px solid #eee; margin:6px 0; padding-top:6px;">
+            <div class="legend-item"><div class="legend-color" style="background:#8B9974"></div> Low elev</div>
+            <div class="legend-item"><div class="legend-color" style="background:#EAE6DA"></div> High elev</div>
+        </div>
+        <div style="border-top:1px solid #eee; margin:6px 0; padding-top:6px;">
+            <div class="legend-item"><div class="legend-color" style="background:#7FCDFF"></div> Water</div>
+            <div class="legend-item"><div class="legend-line" style="background:#4292c6"></div> Streams</div>
+        </div>
+    </div>
+    
+    <div id="status">Loading map...</div>
+
+    <script>
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
+        const MAP_CENTER = [37.8816, -121.9142];
+        const INITIAL_ZOOM = 11;
+        
+        // Day colors
+        const DAY_COLORS = {
+            '1': '#E74C3C',
+            '2': '#3498DB', 
+            '3': '#9B59B6',
+            '4': '#F39C12',
+            'default': '#8B4513'
+        };
+        
+        // OSM Services
+        const OSM_WATER = 'https://services6.arcgis.com/Do88DoK2xjTUCXd1/ArcGIS/rest/services/OSM_NA_Water/FeatureServer/0';
+        const OSM_WATERWAYS = 'https://services6.arcgis.com/Do88DoK2xjTUCXd1/ArcGIS/rest/services/OSM_NA_Waterways/FeatureServer/0';
+        
+        // Bounding box
+        const BOUNDS = {
+            xmin: -122.1, ymin: 37.7,
+            xmax: -121.6, ymax: 38.1,
+            spatialReference: { wkid: 4326 }
+        };
+
+        // ============================================================
+        // INITIALIZE MAP
+        // ============================================================
+        const map = L.map('map', {
+            center: MAP_CENTER,
+            zoom: INITIAL_ZOOM
+        });
+
+        // Esri Vector Basemap - World Basemap v2
+        let basemap;
+        try {
+            // Try the vector basemap
+            basemap = L.esri.Vector.vectorBasemapLayer('arcgis/topographic', {
+                version: 2
+            }).addTo(map);
+        } catch(e) {
+            // Fallback to raster
+            basemap = L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+                { maxZoom: 19 }
+            ).addTo(map);
+        }
+
+        // Hillshade
+        const hillshade = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}',
+            { opacity: 0.25, maxZoom: 18 }
+        ).addTo(map);
+
+        // ============================================================
+        // LAYER STORAGE
+        // ============================================================
+        let layers = {
+            elevation: null,
+            water: null,
+            waterways: null,
+            trails: { day1: null, day2: null, day3: null, day4: null, all: null },
+            points: { camps: null, lunch: null, views: null, other: null },
+            labels: []
+        };
+
+        // ============================================================
+        // UTILITY FUNCTIONS
+        // ============================================================
+        function updateStatus(msg) {
+            document.getElementById('status').textContent = msg;
+        }
+
+        async function queryArcGIS(url, name) {
+            const params = new URLSearchParams({
+                where: '1=1',
+                geometry: JSON.stringify(BOUNDS),
+                geometryType: 'esriGeometryEnvelope',
+                spatialRel: 'esriSpatialRelIntersects',
+                outFields: '*',
+                returnGeometry: 'true',
+                f: 'geojson',
+                outSR: '4326'
+            });
+
+            try {
+                const response = await fetch(`${url}/query?${params}`);
+                const data = await response.json();
+                console.log(`${name}: ${data.features?.length || 0} features`);
+                return data;
+            } catch (err) {
+                console.error(`Error loading ${name}:`, err);
+                return null;
+            }
+        }
+
+        // ============================================================
+        // WATER LAYERS
+        // ============================================================
+        async function loadWater() {
+            updateStatus('Loading water...');
+            const data = await queryArcGIS(OSM_WATER, 'Water');
+            if (data?.features?.length > 0) {
+                layers.water = L.geoJSON(data, {
+                    style: {
+                        fillColor: '#7FCDFF',
+                        fillOpacity: 0.6,
+                        color: '#2171b5',
+                        weight: 1
+                    }
+                }).addTo(map);
+            }
+            return data?.features?.length || 0;
+        }
+
+        async function loadWaterways() {
+            updateStatus('Loading streams...');
+            const data = await queryArcGIS(OSM_WATERWAYS, 'Waterways');
+            if (data?.features?.length > 0) {
+                layers.waterways = L.geoJSON(data, {
+                    style: feature => ({
+                        color: '#4292c6',
+                        weight: feature.properties.fclass === 'river' ? 2.5 : 1.5,
+                        opacity: 0.7
+                    })
+                }).addTo(map);
+            }
+            return data?.features?.length || 0;
+        }
+
+        // ============================================================
+        // ELEVATION
+        // ============================================================
+        function loadElevation(geojson, filename) {
+            if (layers.elevation) map.removeLayer(layers.elevation);
+            
+            layers.elevation = L.geoJSON(geojson, {
+                style: feature => ({
+                    fillColor: feature.properties.fill || '#8B9974',
+                    fillOpacity: feature.properties['fill-opacity'] || 0.65,
+                    color: feature.properties.fill || '#8B9974',
+                    weight: 0
+                })
+            }).addTo(map);
+            
+            layers.elevation.bringToBack();
+            reorderLayers();
+            
+            document.getElementById('drop-elevation').textContent = 'âœ“ ' + filename;
+            document.getElementById('drop-elevation').classList.add('loaded');
+            map.fitBounds(layers.elevation.getBounds());
+        }
+
+        // ============================================================
+        // TRAILS
+        // ============================================================
+        function loadTrails(geojson, filename) {
+            // Clear existing
+            Object.values(layers.trails).forEach(l => { if (l) map.removeLayer(l); });
+            clearLabels();
+            
+            // Separate by day
+            const byDay = { '1': [], '2': [], '3': [], '4': [], 'other': [] };
+            
+            geojson.features.forEach(f => {
+                const day = f.properties.DAY || f.properties.day || f.properties.Day || '';
+                const dayStr = String(day);
+                if (byDay[dayStr]) {
+                    byDay[dayStr].push(f);
+                } else {
+                    byDay['other'].push(f);
+                }
+            });
+            
+            // Create layers for each day
+            ['1', '2', '3', '4'].forEach(day => {
+                if (byDay[day].length > 0) {
+                    const dayGJ = { type: 'FeatureCollection', features: byDay[day] };
+                    layers.trails['day' + day] = L.geoJSON(dayGJ, {
+                        style: {
+                            color: DAY_COLORS[day],
+                            weight: 4,
+                            opacity: 0.9,
+                            dashArray: '10, 5'
+                        },
+                        onEachFeature: (feature, layer) => {
+                            const name = feature.properties.ROUTENAME || 
+                                        feature.properties.NAME || 
+                                        feature.properties.name || '';
+                            if (name) {
+                                layer.bindPopup(`<b>${name}</b><br>Day ${day}`);
+                                createTrailLabel(feature, name);
+                            }
+                        }
+                    }).addTo(map);
+                }
+            });
+            
+            // Other trails (no day assigned)
+            if (byDay['other'].length > 0) {
+                const otherGJ = { type: 'FeatureCollection', features: byDay['other'] };
+                layers.trails.all = L.geoJSON(otherGJ, {
+                    style: {
+                        color: DAY_COLORS['default'],
+                        weight: 3,
+                        opacity: 0.8,
+                        dashArray: '8, 4'
+                    },
+                    onEachFeature: (feature, layer) => {
+                        const name = feature.properties.ROUTENAME || 
+                                    feature.properties.NAME || 
+                                    feature.properties.name || '';
+                        if (name) {
+                            layer.bindPopup(`<b>${name}</b>`);
+                            createTrailLabel(feature, name);
+                        }
+                    }
+                }).addTo(map);
+            }
+            
+            reorderLayers();
+            document.getElementById('drop-trails').textContent = 'âœ“ ' + filename;
+            document.getElementById('drop-trails').classList.add('loaded');
+            
+            const totalTrails = geojson.features.length;
+            updateStatus(`Loaded ${totalTrails} trail segments`);
+        }
+
+        function createTrailLabel(feature, name) {
+            let point = null;
+            const geom = feature.geometry;
+            
+            if (geom.type === 'LineString' && geom.coordinates.length > 2) {
+                const mid = Math.floor(geom.coordinates.length / 2);
+                point = [geom.coordinates[mid][1], geom.coordinates[mid][0]];
+            } else if (geom.type === 'MultiLineString' && geom.coordinates[0]?.length > 2) {
+                const line = geom.coordinates[0];
+                const mid = Math.floor(line.length / 2);
+                point = [line[mid][1], line[mid][0]];
+            }
+            
+            if (point) {
+                const label = L.marker(point, {
+                    icon: L.divIcon({
+                        className: 'trail-label',
+                        html: name,
+                        iconSize: null
+                    })
+                }).addTo(map);
+                layers.labels.push(label);
+            }
+        }
+
+        function clearLabels() {
+            layers.labels.forEach(l => map.removeLayer(l));
+            layers.labels = [];
+        }
+
+        // ============================================================
+        // POINTS OF INTEREST
+        // ============================================================
+        function loadPoints(geojson, filename) {
+            // Clear existing
+            Object.values(layers.points).forEach(l => { if (l) map.removeLayer(l); });
+            
+            // Categorize points
+            const camps = [], lunch = [], views = [], other = [];
+            
+            geojson.features.forEach(f => {
+                const name = (f.properties.Name || f.properties.name || f.properties.NAME || '').toLowerCase();
+                const type = (f.properties.Type || f.properties.type || f.properties.TYPE || '').toLowerCase();
+                
+                if (name.includes('camp') || type.includes('camp')) {
+                    camps.push(f);
+                } else if (name.includes('lunch') || type.includes('lunch')) {
+                    lunch.push(f);
+                } else if (name.includes('view') || name.includes('overlook') || name.includes('lookout') || type.includes('view')) {
+                    views.push(f);
+                } else {
+                    other.push(f);
+                }
+            });
+            
+            // Create layers
+            if (camps.length > 0) {
+                layers.points.camps = L.geoJSON({ type: 'FeatureCollection', features: camps }, {
+                    pointToLayer: (f, latlng) => L.marker(latlng, {
+                        icon: L.divIcon({
+                            className: 'poi-icon poi-campground',
+                            html: 'â›º',
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 12]
+                        })
+                    }),
+                    onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || f.properties.name || 'Campground'}</b>`)
+                }).addTo(map);
+            }
+            
+            if (lunch.length > 0) {
+                layers.points.lunch = L.geoJSON({ type: 'FeatureCollection', features: lunch }, {
+                    pointToLayer: (f, latlng) => L.marker(latlng, {
+                        icon: L.divIcon({
+                            className: 'poi-icon poi-lunch',
+                            html: 'ðŸ´',
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 12]
+                        })
+                    }),
+                    onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || f.properties.name || 'Lunch Spot'}</b>`)
+                }).addTo(map);
+            }
+            
+            if (views.length > 0) {
+                layers.points.views = L.geoJSON({ type: 'FeatureCollection', features: views }, {
+                    pointToLayer: (f, latlng) => L.marker(latlng, {
+                        icon: L.divIcon({
+                            className: 'poi-icon poi-viewpoint',
+                            html: 'ðŸ‘ï¸',
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 12]
+                        })
+                    }),
+                    onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || f.properties.name || 'Viewpoint'}</b>`)
+                }).addTo(map);
+            }
+            
+            if (other.length > 0) {
+                layers.points.other = L.geoJSON({ type: 'FeatureCollection', features: other }, {
+                    pointToLayer: (f, latlng) => L.circleMarker(latlng, {
+                        radius: 6,
+                        fillColor: '#555',
+                        fillOpacity: 0.8,
+                        color: '#fff',
+                        weight: 2
+                    }),
+                    onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || f.properties.name || 'Point'}</b>`)
+                }).addTo(map);
+            }
+            
+            document.getElementById('drop-points').textContent = 'âœ“ ' + filename;
+            document.getElementById('drop-points').classList.add('loaded');
+            updateStatus(`Loaded ${geojson.features.length} points of interest`);
+        }
+
+        // ============================================================
+        // LOAD FROM ARCGIS SERVICE
+        // ============================================================
+        async function loadFromService() {
+            const url = document.getElementById('service-url').value.trim();
+            if (!url) {
+                alert('Please paste a FeatureServer URL');
+                return;
+            }
+            
+            updateStatus('Loading from service...');
+            
+            try {
+                const data = await queryArcGIS(url, 'Service');
+                if (data?.features?.length > 0) {
+                    // Detect if it's trails or points
+                    const firstGeom = data.features[0].geometry?.type;
+                    if (firstGeom === 'Point' || firstGeom === 'MultiPoint') {
+                        loadPoints(data, 'ArcGIS Service');
+                    } else {
+                        loadTrails(data, 'ArcGIS Service');
+                    }
+                } else {
+                    alert('No features found in service');
+                }
+            } catch (err) {
+                alert('Error loading service: ' + err.message);
+            }
+        }
+
+        // ============================================================
+        // LAYER ORDERING
+        // ============================================================
+        function reorderLayers() {
+            if (layers.elevation) layers.elevation.bringToBack();
+            if (layers.water) layers.water.bringToFront();
+            if (layers.waterways) layers.waterways.bringToFront();
+            Object.values(layers.trails).forEach(l => { if (l) l.bringToFront(); });
+            Object.values(layers.points).forEach(l => { if (l) l.bringToFront(); });
+        }
+
+        // ============================================================
+        // DROPZONE HANDLING
+        // ============================================================
+        function setupDropzone(id, loadFn) {
+            const dz = document.getElementById(id);
+            
+            ['dragenter', 'dragover'].forEach(e => {
+                dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('dragover'); });
+            });
+            ['dragleave', 'drop'].forEach(e => {
+                dz.addEventListener(e, () => dz.classList.remove('dragover'));
+            });
+            
+            dz.addEventListener('drop', e => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file) readFile(file, loadFn);
+            });
+            
+            dz.addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.geojson,.json';
+                input.onchange = e => { if (e.target.files[0]) readFile(e.target.files[0], loadFn); };
+                input.click();
+            });
+        }
+
+        function readFile(file, loadFn) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const gj = JSON.parse(e.target.result);
+                    loadFn(gj, file.name);
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ============================================================
+        // TOGGLE HANDLERS
+        // ============================================================
+        function setupToggles() {
+            document.getElementById('chk-hillshade').onchange = e => 
+                hillshade.setOpacity(e.target.checked ? 0.25 : 0);
+            
+            document.getElementById('chk-elevation').onchange = e => {
+                if (layers.elevation) e.target.checked ? layers.elevation.addTo(map) : map.removeLayer(layers.elevation);
+            };
+            
+            document.getElementById('chk-water').onchange = e => {
+                if (layers.water) e.target.checked ? layers.water.addTo(map) : map.removeLayer(layers.water);
+            };
+            
+            document.getElementById('chk-streams').onchange = e => {
+                if (layers.waterways) e.target.checked ? layers.waterways.addTo(map) : map.removeLayer(layers.waterways);
+            };
+            
+            // Day toggles
+            ['1', '2', '3', '4'].forEach(d => {
+                document.getElementById('chk-day' + d).onchange = e => {
+                    const layer = layers.trails['day' + d];
+                    if (layer) e.target.checked ? layer.addTo(map) : map.removeLayer(layer);
+                };
+            });
+            
+            // POI toggles
+            document.getElementById('chk-camps').onchange = e => {
+                if (layers.points.camps) e.target.checked ? layers.points.camps.addTo(map) : map.removeLayer(layers.points.camps);
+            };
+            document.getElementById('chk-lunch').onchange = e => {
+                if (layers.points.lunch) e.target.checked ? layers.points.lunch.addTo(map) : map.removeLayer(layers.points.lunch);
+            };
+            document.getElementById('chk-views').onchange = e => {
+                if (layers.points.views) e.target.checked ? layers.points.views.addTo(map) : map.removeLayer(layers.points.views);
+            };
+            document.getElementById('chk-labels').onchange = e => {
+                layers.labels.forEach(l => e.target.checked ? l.addTo(map) : map.removeLayer(l));
+            };
+        }
+
+        // ============================================================
+        // INITIALIZE
+        // ============================================================
+        (async () => {
+            setupDropzone('drop-elevation', loadElevation);
+            setupDropzone('drop-trails', loadTrails);
+            setupDropzone('drop-points', loadPoints);
+            setupToggles();
+            
+            const waterCount = await loadWater();
+            const streamCount = await loadWaterways();
+            
+            // AUTO-LOAD ELEVATION DATA
+            try {
+                updateStatus('Loading elevation data...');
+                const response = await fetch('CCC_50ft_Polygons_ALL_20251211_060439.geojson');
+                const elevationData = await response.json();
+                loadElevation(elevationData, 'Mt Diablo Elevation');
+                updateStatus(`Water: ${waterCount} | Streams: ${streamCount} | Elevation: ${elevationData.features.length} polygons`);
+            } catch (err) {
+                console.error('Could not auto-load elevation:', err);
+                updateStatus(`Water: ${waterCount} | Streams: ${streamCount} | Drag elevation file to load`);
+            }
+        })();
+    </script>
+</body>
+</html>
