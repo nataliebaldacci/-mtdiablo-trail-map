@@ -1,0 +1,489 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2025-12-13T00:18:56Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150938236",
+        "addr:postcode": "94517",
+        "ele": "120",
+        "gnis:feature_id": "277488",
+        "name": "Clayton",
+        "place": "town",
+        "population": "12265",
+        "population:date": "2019",
+        "source:population": "United States Census",
+        "website": "https://ci.clayton.ca.us/",
+        "wikidata": "Q948168",
+        "wikipedia": "en:Clayton, California"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9357878,
+          37.9411668
+        ]
+      },
+      "id": "node/150938236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150940000",
+        "ele": "161",
+        "gnis:feature_id": "1655967",
+        "name": "Diablo",
+        "note": "unincorporated community",
+        "place": "village",
+        "population": "1255",
+        "source:population": "2020 US Census",
+        "wikidata": "Q2622618",
+        "wikipedia": "en:Diablo, California"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.958014,
+          37.8349258
+        ]
+      },
+      "id": "node/150940000"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150940994",
+        "ele": "79",
+        "gnis:feature_id": "1657900",
+        "name": "Alamo",
+        "note": "Unincorporated community",
+        "place": "town",
+        "population": "15314",
+        "source:population": "2020 US Census",
+        "wikidata": "Q241598"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.032184,
+          37.8502033
+        ]
+      },
+      "id": "node/150940994"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150943437",
+        "ele": "148",
+        "gnis:feature_id": "1656275",
+        "name": "San Ramon",
+        "place": "town",
+        "population": "75995",
+        "population:date": "2019",
+        "source:population": "United States Census",
+        "wikidata": "Q605472"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9544387,
+          37.7648021
+        ]
+      },
+      "id": "node/150943437"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150951721",
+        "ele": "471",
+        "gnis:feature_id": "1656260",
+        "name": "Rock City",
+        "place": "locality",
+        "wikidata": "Q7354321"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.93407,
+          37.8502356
+        ]
+      },
+      "id": "node/150951721"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150963088",
+        "ele": "109",
+        "gnis:feature_id": "277497",
+        "name": "Danville",
+        "place": "town",
+        "population": "44510",
+        "population:date": "2019",
+        "source:population": "United States Census",
+        "wikidata": "Q846586",
+        "wikipedia": "en:Danville, California"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0008254,
+          37.8225892
+        ]
+      },
+      "id": "node/150963088"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150967736",
+        "ele": "52",
+        "gnis:feature_id": "1660120",
+        "name": "Walnut Creek",
+        "name:zh": "核桃溪",
+        "place": "town",
+        "population": "70166",
+        "population:date": "2019",
+        "source:population": "United States Census",
+        "wikidata": "Q493261",
+        "wikipedia": "en:Walnut Creek, California"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0618702,
+          37.9020731
+        ]
+      },
+      "id": "node/150967736"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150970822",
+        "ele": "157",
+        "gnis:feature_id": "1655794",
+        "name": "Alamo Oaks",
+        "place": "neighbourhood",
+        "wikidata": "Q4705971"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9920075,
+          37.8411324
+        ]
+      },
+      "id": "node/150970822"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150971347",
+        "ele": "304",
+        "gnis:feature_id": "1867000",
+        "name": "Blackhawk",
+        "place": "village",
+        "population": "9637",
+        "source:population": "2020 US Census",
+        "wikidata": "Q3470840"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9148382,
+          37.8189967
+        ]
+      },
+      "id": "node/150971347"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150972745",
+        "ele": "19",
+        "gnis:feature_id": "1658772",
+        "name": "Hookston",
+        "place": "locality",
+        "wikidata": "Q14682334"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.05274,
+          37.9413121
+        ]
+      },
+      "id": "node/150972745"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/150973021",
+        "ele": "61",
+        "gnis:feature_id": "255921",
+        "name": "Walnut Heights",
+        "place": "neighbourhood",
+        "wikidata": "Q7963606"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.034988,
+          37.8912729
+        ]
+      },
+      "id": "node/150973021"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/316944829",
+        "name": "Contra Costa",
+        "place": "county"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9175345,
+          37.9034806
+        ]
+      },
+      "id": "node/316944829"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2632701110",
+        "name": "Saddleback",
+        "place": "neighbourhood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.7309384,
+          37.7288497
+        ]
+      },
+      "id": "node/2632701110"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2632701162",
+        "name": "Greenville North",
+        "place": "neighbourhood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.728342,
+          37.7230963
+        ]
+      },
+      "id": "node/2632701162"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2632792330",
+        "name": "Proud Country",
+        "place": "neighbourhood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.7449148,
+          37.7220575
+        ]
+      },
+      "id": "node/2632792330"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2641555433",
+        "name": "Maralisa",
+        "place": "neighbourhood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.7204818,
+          37.7213889
+        ]
+      },
+      "id": "node/2641555433"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2641555434",
+        "name": "Altamar Meadows",
+        "place": "neighbourhood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.7229708,
+          37.7214313
+        ]
+      },
+      "id": "node/2641555434"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2641557545",
+        "name": "Maralisa Courtyard",
+        "place": "neighbourhood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.7210718,
+          37.7236887
+        ]
+      },
+      "id": "node/2641557545"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6217898250",
+        "name": "North Gate",
+        "place": "village",
+        "wikidata": "Q6045170"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.997294,
+          37.9066672
+        ]
+      },
+      "id": "node/6217898250"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6220138226",
+        "ele": "302",
+        "name": "Castle Hill",
+        "place": "village",
+        "population": "1299",
+        "source:population": "2010 United States Census",
+        "wikidata": "Q5050120",
+        "wikipedia": "en:Castle Hill, California"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0572127,
+          37.8776359
+        ]
+      },
+      "id": "node/6220138226"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6342728834",
+        "name": "Contra Costa Centre",
+        "note": "unincorporated community",
+        "old_name": "Waldon",
+        "place": "village",
+        "wikidata": "Q5165600",
+        "wikipedia": "en:Contra Costa Centre, California"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.054374,
+          37.9265354
+        ]
+      },
+      "id": "node/6342728834"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6578553332",
+        "name": "Pleasant Valley",
+        "place": "neighbourhood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.063138,
+          37.9354004
+        ]
+      },
+      "id": "node/6578553332"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7787867962",
+        "ele": "1129",
+        "gnis:feature_id": "2583094",
+        "name": "Norris Canyon",
+        "note": "CDP",
+        "place": "village",
+        "population": "957",
+        "source": "GNIS;Census",
+        "wikidata": "Q6045090"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.989225,
+          37.7455116
+        ]
+      },
+      "id": "node/7787867962"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9102241681",
+        "name": "China Wall",
+        "place": "locality"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9873964,
+          37.8682694
+        ]
+      },
+      "id": "node/9102241681"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9393159538",
+        "ele": "214",
+        "gnis:feature_id": "2633171",
+        "name": "Camino Tassajara",
+        "note": "unincorporated community",
+        "place": "village",
+        "population": "4951",
+        "source:population": "2020 US Census"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.8865004,
+          37.7969566
+        ]
+      },
+      "id": "node/9393159538"
+    }
+  ]
+}
